@@ -1,0 +1,12 @@
+### YAML properties file
+### Properties from this file will be injected by Spring Boot into our configuration beans using the @value annotation
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      auto-offset-reset: earliest
+      group-id: boot
+kafka:
+  topic:
+    boot: kafkademo2.t
+    
