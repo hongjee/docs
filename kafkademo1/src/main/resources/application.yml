@@ -1,0 +1,7 @@
+### YAML properties file
+### Properties from this file will be injected by Spring Boot into our configuration beans using the @value annotation
+kafka:
+  bootstrap-servers: localhost:9092
+  topic:
+    kafkademo1: kafkademo1.t
+    
