@@ -1,0 +1,11 @@
+### YAML properties file
+### Properties from this file will be injected by Spring Boot into our configuration beans using the @value annotation
+###
+### As the embedded server is started on a random port, this dedicated src/test/resources/apppication.yml properties file for testing 
+### uses the spring.embedded.kafka.brokers system property that the @ClassRule sets to the address of the broker(s).
+###
+kafka:
+  bootstrap-servers: ${spring.embedded.kafka.brokers}
+  topic:
+    kafkademo1: kafkademo1.t
+    
