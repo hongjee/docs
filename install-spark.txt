@@ -1,0 +1,23 @@
+
+## install openjdk 8
+
+mkdir /home/datastax/demo/
+
+cd /home/datastax/demo/
+
+wget -qO - http://downloads.lightbend.com/scala/2.12.2/scala-2.12.2.tgz | tar -xz -C /home/datastax/demo/ | ln -s scala-2.12.2 scala
+
+wget -qO - https://dl.bintray.com/sbt/native-packages/sbt/0.13.15/sbt-0.13.15.tgz | tar -xz -C /home/datastax/demo/
+
+wget -qO - http://d3kbcqa49mib13.cloudfront.net/spark-2.2.0-bin-hadoop2.7.tgz | tar -xz -C /home/datastax/demo/ | ln -s spark-2.2.0-bin-hadoop2.7 spark 
+
+cp spark/conf/log4j.properties.template spark/conf/log4j.properties && sed -i -e s/WARN/ERROR/g spark/conf/log4j.properties && sed -i -e s/INFO/ERROR/g spark/conf/log4j.properties
+
+
+SCALA_HOME=/home/datastax/demo/scala
+SBT_HOME=/home/datastax/demo/sbt
+SPARK_HOME=/home/datastax/demo/spark
+JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.102-4.b14.el7.x86_64/jre
+PATH=$JAVA_HOME/bin:$SCALA_HOME/bin:$SBT_HOME/bin:$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH
+
+
