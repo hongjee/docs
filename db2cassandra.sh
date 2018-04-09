@@ -1,0 +1,1 @@
+../dse/bin/dse spark --driver-class-path /home/datastax/app/db2jcc.jar:/home/datastax/app/spark-cassandra-connector_2.11-2.0.7.jar:/home/datastax/app/jsr166e-1.1.0.jar:/home/datastax/app/joda-convert-2.0.1.jar
