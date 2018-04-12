@@ -1,0 +1,79 @@
+Apache NiFi POC: read data from the emp table in DB2 sample database and load the data into Cassandra testks.employees table
+	
+	Add the DB2 JDBC driver to the Nifi Classpath and start Nifi
+		cp /usr/src/app/db2jcc.jar /opt/nifi/nifi-1.5.0/lib/
+		ls /opt/nifi/nifi-1.5.0/lib/db2jcc.jar
+	
+		cd /opt/nifi/nifi-1.5.0
+		bin/nifi.sh start &
+
+	Open web browser and visit the URL: http://<Nifi-host-ip>:8080/nifi
+	  - to configure DB2 controller service with DB2 JDBC driver
+		    Under the Operate open the settings for the process group named Nifi Flow, go to Controller Services tab 
+		    and click on + button to add a new controller service, choose DBCPConnectionPool and click on Add button,
+		    click on Configure button of the newly created controller service, fill in the details to connect to DB2 database:
+				database connection url: jdbc:db2://192.168.3.120:50000/sample
+				database driver class name: com.ibm.db2.jcc.DB2Driver
+				database driver locations: /opt/nifi/nifi-1.5.0/lib/db2jcc.jar
+				database user: db2user
+				database password: db2user
+				validation query: select count(*) from db2inst1.emp
+				
+				name: db2sample
+			click on Apply button to save the settings;			
+			On the Controller Service, you should find an Enable button, click on it to enable the service.
+			
+	  - to build the nifi flow,
+			Drag a processor on to canvas and choose ExecuteSQL and Add it on to canvas, right click and choose Configure.
+			Go to Properties tab
+			    Database Connection Pooling Service: db2sample
+				SQL select query:
+					select WORKDEPT,EMPNO,FIRSTNME,MIDINIT, LASTNAME, PHONENO,HIREDATE,BIRTHDATE,EDLEVEL,SEX,JOB,SALARY,BONUS,COMM from db2inst1.emp
+					 
+			
+			Drag another processor from the menu and choose SplitAvro as your processor from the list. 
+			Connect the processor ExecuteSQL to SplitAvro. 			
+			Right click on the SplitAvro processor and choose Configure. 
+			On the settings tab, choose to automatically terminate the relationships for failure and original.
+			Click on Apply and save the configuration for SplitAvro	
+
+			Drag another processor from menu and choose ConvertAvrotoJSON to be your processor. 
+			This processor will convert all the avro records to JSON format.					 
+			Connect SplitAvro and ConvertAvrotoJSON processors. Under for relationships, choose split and click on Add.	
+			Right click ConvertAvrotoJSON processor and choose configure.
+			Under settings tab, choose to automatically terminate relationships for failure. 
+			Click on Apply to save configuration.
+			
+		    Drag another processor from the menu and choose EvaulateJSONPath process
+			Connect ConvertAvrotoJSON and EvaulateJSONPath processors. Under for relationships, choose success and click on Add.	
+			Right click EvaulateJSONPath processor and choose configure.
+				Destination: flowfile-attribute
+				Return type: auto-detect
+				path not found behavior: ignore
+				null value representation empty string
+				Add properties mappings
+					work_deparment  employee_number firstname   middlename  lastname    phone_number  hiredate    birthdate    dlevel     sex    job    salary     bonus    commission
+					$.WORKDEPT 		$.EMPNO 		$.FIRSTNME 	$.MIDINIT 	$.LASTNAME 	$.PHONENO 	  $.HIREDATE  $.BIRTHDATE  $.EDLEVEL  $.SEX  $.JOB 	$.SALARY   $.BONUS 		$.COMM
+
+		    Drag another processor from the menu and choose the ReplaceText processor
+			Connect EvaulateJSONPath and ReplaceText processors. Under for relationships, choose matched and click on Add.	
+			Right click ReplaceText processor and choose configure.
+				Search value: (?s)(^.*$)
+				Replacement value: 
+INSERT INTO testks.employees (work_deparment, employee_number, firstname, middlename, lastname, phone_number,hiredate,birthdate,edlevel,sex,job,salary,bonus,commission) 
+VALUES ( '${work_deparment}', '${employee_number}', '${firstname:replaceAll("'","''")}', '${middlename}', '${lastname:replaceAll("'","''")}', '${phone_number}', '${hiredate}', '${birthdate}', ${edlevel:replaceNull(0)}, '${sex}', '${job}', ${salary:replaceNull(0.0)}, ${bonus:replaceNull(0.0)}, ${commission:replaceNull(0.0)} );
+
+		    Drag another processor from the menu and choose PutCassandraQL process
+			Connect ReplaceText and PutCassandraQL processors. Under for relationships, choose success and click on Add.	
+			Right click PutCassandraQL processor and choose configure.
+				Cassandra Contact Points: 192.168.3.120:9042
+				keyspace: testks
+				CLient Auth: NONE
+		
+			
+			
+
+			
+			
+			
+			
