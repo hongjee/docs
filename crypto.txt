@@ -1,0 +1,165 @@
+package crypto;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigInteger;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
+
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESedeKeySpec;
+
+
+public class Cryptor {
+	private final SecretKey secretKey;
+	
+	public Cryptor(String keyInHex) throws RuntimeException {
+		try {
+			this.secretKey = Cryptor.bytes2secretKey(hex2bytes(keyInHex), CIPHER_NAME);
+		} catch(Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
+	
+    public InputStream decryptStream(InputStream inputStream) throws Exception {
+        Cipher cipher = Cipher.getInstance(CIPHER_TYPE);
+        cipher.init(Cipher.DECRYPT_MODE, this.secretKey);
+        return new CipherInputStream(inputStream, cipher);
+    }
+
+    public OutputStream encryptStream(OutputStream outputStream) throws Exception {
+        Cipher cipher = Cipher.getInstance(CIPHER_TYPE);
+        cipher.init(Cipher.ENCRYPT_MODE, this.secretKey);
+        return new CipherOutputStream(outputStream, cipher);
+    }	
+	
+	public String encrypt(String data) throws Exception {
+		if(data==null || data.isEmpty()) return "";
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		OutputStream out = encryptStream(baos);
+		stream(new ByteArrayInputStream(data.getBytes(ENCODING_CHARSET)), out);
+		out.close();
+		return bytes2hex(baos.toByteArray());
+	}
+
+	public String decrypt(String encrypted) throws Exception {
+		if(encrypted==null || encrypted.isEmpty()) return "";
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		baos = new ByteArrayOutputStream();
+		stream(decryptStream(new ByteArrayInputStream(hex2bytes(encrypted))), baos);
+		return new String(baos.toByteArray(), ENCODING_CHARSET);
+	}
+	
+	public static void stream(InputStream in, OutputStream out) throws IOException {
+		// Read from the input stream and write to the output stream
+		byte[] buffer = new byte[2048];
+		int bytesRead;
+		while ((bytesRead = in.read(buffer)) != -1) {
+			out.write(buffer, 0, bytesRead);
+		}
+		
+		java.util.Arrays.fill(buffer, (byte) 0);
+	}
+
+	// TripleDES for secret-key algorithm
+	public static final String CIPHER_NAME = "DESede";
+
+	// Triple-DES (3DES) algorithm with Electronic CookBook (ECB) mode and
+	// PKCS5 padding ( DESede/ECB/PKCS5Padding ) for cipher transformation
+	public static final String CIPHER_TYPE = "DESede/ECB/PKCS5Padding";
+
+	public static final String ENCODING_CHARSET = "UTF-8";
+
+	public static String generateKeyInHex() throws Exception {
+		return bytes2hex(secretKey2bytes(generateSecretKey(CIPHER_NAME), CIPHER_NAME));
+	}
+	
+	protected static String bytes2hex(byte[] data) {
+		BigInteger bi = new BigInteger(1, data);
+		String hex = bi.toString(16);
+		if (hex.length() % 2 != 0)
+			hex = "0" + hex;
+
+		return hex;
+	}
+
+	protected static byte[] hex2bytes(String data) {
+		BigInteger bi = new BigInteger(data, 16);
+		byte[] bytes = bi.toByteArray();
+		if(bytes.length > data.length() / 2)
+			bytes = Arrays.copyOfRange(bytes, 1, bytes.length);
+		return bytes;
+	}
+
+	
+	protected static SecretKey generateSecretKey(String cipherName) throws NoSuchAlgorithmException {
+	    KeyGenerator keyGenerator = KeyGenerator.getInstance(cipherName);
+	    return keyGenerator.generateKey();
+	}
+	
+	protected static byte[] secretKey2bytes(SecretKey key, String cipherName) throws NoSuchAlgorithmException, InvalidKeySpecException {
+		SecretKeyFactory keyfactory = SecretKeyFactory.getInstance(cipherName);
+		DESedeKeySpec keySpec = (DESedeKeySpec) keyfactory.getKeySpec(key, DESedeKeySpec.class);
+		return keySpec.getKey();
+	}
+
+	protected static SecretKey bytes2secretKey(byte[] keyInBytes, String cipherName) throws NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException {
+	    DESedeKeySpec keySpec = new DESedeKeySpec(keyInBytes);
+	    SecretKeyFactory keyfactory = SecretKeyFactory.getInstance(cipherName);
+	    return keyfactory.generateSecret(keySpec);	    
+	}
+	
+	public static void main(String[] args) throws Exception {
+		if(args.length<1) { 
+			printUsage();
+			return;
+		}
+
+		if("-g".equalsIgnoreCase(args[0])) { 
+			System.out.print("Generating key. This may take some time...");
+	         System.out.flush();
+	         String keyInHex = generateKeyInHex();
+	         System.out.println("done.");
+	         System.out.println("Below is the Secret key in hex. Protect that file carefully!");
+	         System.out.println(keyInHex);
+	         return;
+		} 
+
+		if(args.length<3) { 
+			printUsage();
+			return;
+		}
+		
+		String keyInHex = args[1];
+		String data = args[2];
+
+		Cryptor cryptor = new Cryptor(keyInHex);
+		
+		if("-e".equalsIgnoreCase(args[0])) {
+			System.out.println("encrypting.... ");
+			String encrypted = cryptor.encrypt(data);
+			System.out.println("encrypted: " + encrypted);
+			
+		} else if (args[0].equals("-d")) { 
+			System.out.println("decrypting.... ");
+			String decrypted = cryptor.decrypt(data);
+			System.out.println("decrypted: " + decrypted);
+		}
+	}
+	
+	private static final void printUsage() {
+	     System.out.println("Usage: java " + Cryptor.class.getName() + " -g | -e key-in-hex data-to-encrypt | -d key-in-hex data-to-decrypt");		
+	}
+}
