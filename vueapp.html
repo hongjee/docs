@@ -1,0 +1,78 @@
+<html>
+   <head>
+      <title>Dashboard Demo</title>
+	  <link rel="stylesheet" href="vue-tabs.css">
+	  <link rel="stylesheet" href="vueapp.css">
+   </head>
+   <body>	  
+		<div id="app">
+		  <div class="title-row">
+			<h1>Dashboard</h1>
+		  </div>
+		  
+			<vue-tabs class="content-row">
+				<v-tab title="Spline Chart">
+					<highcharts :options="chartOptions.splineChart"></highcharts>
+				</v-tab>
+
+				<v-tab title="Pie Chart">
+					<highcharts :options="chartOptions.pieChart"></highcharts>
+				</v-tab>
+			</vue-tabs>
+
+			<vue-tabs class="content-row">
+				<v-tab title="Highstock">
+					<highcharts :constructor-type="'stockChart'" :options="chartOptions.stockChart"></highcharts>
+				</v-tab>
+				
+				<v-tab title="Bitcoin Price Index">
+					  <section v-if="errored">
+						<p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
+					  </section>
+
+					  <section v-else>
+						<div v-if="loading">Loading...</div>
+
+						<div
+						  v-else
+						  v-for="currency in info"
+						  class="currency"
+						>
+						  {{ currency.description }}:
+						  <span class="lighten">
+							<span v-html="currency.symbol"></span>{{ currency.rate_float | currencydecimal }}
+						  </span>
+						</div>
+
+					  </section>
+				</v-tab>
+			</vue-tabs>	
+			<vue-tabs class="content-row">
+				<v-tab title="Today's Statistics">
+					<div class = "Table">
+						<div class = "Row">
+							<div class = "Cell">
+								<p>Progress</p>
+								<p>Current process: {{stats.count[0]}}<br>
+								   Next Process: {{stats.count[1]}}<br>
+								   Total processed: {{stats.count[2]}}
+								</p>
+							</div>
+							<div class = "Cell"><p>Stucked: {{stats.stuck}}</p></div>
+							<div class = "Cell"><p>Failed: {{stats.failed}}</p></div>
+							<div class = "Cell"><p>Fraud: {{stats.fraud}}</p></div>
+						</div>
+					</div>			
+				</v-tab>
+			</vue-tabs>	
+		</div>
+	  
+      <script type = "text/javascript" src = "highstock.js"></script>
+      <script type = "text/javascript" src = "vue.js"></script>
+      <script type = "text/javascript" src = "vue-tabs.js"></script>
+      <script type = "text/javascript" src = "highcharts-vue.js"></script>
+      <script type = "text/javascript" src = "vueapp.js"></script>
+   </body>
+</html>
+
+
