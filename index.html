@@ -1,0 +1,25 @@
+<html>
+   <body>
+	  <h1>{{message}}</h1>
+	  
+      <form action = "http://localhost:5000/photocapture/1234" method = "post" enctype = "multipart/form-data">
+         <p>Tracking Id: <input type = "text" name = "trackingId" value="1234"/></p>
+         <p>Type: <input type = "text" name = "type" value="image"/></p>
+         <p>Profile Id: <input type = "text" name = "profileId" value="S123456"/></p>
+         <p># of Images: <input type = "text" name = "imageNumber" value=""/></p>
+         <p><input type = "file" name = "file" /></p>
+         <p><input type = "file" name = "file" /></p>
+         <p><input type = "file" name = "file" /></p>
+         <p><input type = "submit" value = "submit" /></p>
+      </form>
+	  
+	  <hr>
+	  
+      <form action = "http://localhost:5000/photocapture/1234/update" method = "post">
+         <p>Tracking Id: <input type = "text" name = "trackingId" value="1234"/></p>
+         <p>Payee Id: <input type = "text" name = "payeeId" value="123456"/></p>
+         <p><input type = "submit" value = "submit" /></p>
+      </form>
+	  
+   </body>
+</html>
