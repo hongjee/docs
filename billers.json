@@ -1,0 +1,91 @@
+[
+  {
+    "id": "1000001",
+    "name": "Verizon wireless",
+    "zip": "10001",
+    "_childDocuments":[
+        {"id":"1000001_10001","zip1":"10001", "popularity":100},
+        {"id":"1000001_10002","zip1":"10002", "popularity":1},
+        {"id":"1000001_10003","zip1":"10003", "popularity":10},
+        {"id":"1000001_10004","zip1":"10004", "popularity":2},
+        {"id":"1000001_10005","zip1":"10005", "popularity":3}
+    ]
+  },
+  {
+    "id": "1000002",
+    "name": "Verizon wireless",
+    "zip": "20002",
+    "_childDocuments":[
+        {"id":"1000002_20001","zip1":"20001", "popularity":10},
+        {"id":"1000002_20002","zip1":"20002", "popularity":100},
+        {"id":"1000002_20003","zip1":"20003", "popularity":10},
+        {"id":"1000002_20005","zip1":"20005", "popularity":3}
+    ]
+  },
+  {
+    "id": "1000003",
+    "name": "Verizon Fios",
+    "zip": "10003",
+    "_childDocuments":[
+        {"id":"1000003_10001","zip1":"10001", "popularity":1},
+        {"id":"1000003_10002","zip1":"10002", "popularity":1},
+        {"id":"1000003_10003","zip1":"10003", "popularity":10},
+        {"id":"1000003_10004","zip1":"10004", "popularity":50},
+        {"id":"1000003_10005","zip1":"10005", "popularity":3}
+    ]
+  },
+  {
+    "id": "1000004",
+    "name": "Verizon Fios",
+    "zip": "30002",
+    "_childDocuments":[
+        {"id":"1000004_30001","zip1":"30001", "popularity":10},
+        {"id":"1000004_30002","zip1":"30002", "popularity":100},
+        {"id":"1000004_30003","zip1":"30003", "popularity":10}
+    ]
+  },
+  {
+    "id": "1000005",
+    "name": "Cablevision",
+    "zip": "10005",
+    "_childDocuments":[
+        {"id":"1000005_10005","zip1":"10005", "popularity":100},
+        {"id":"1000005_10002","zip1":"10002", "popularity":1},
+        {"id":"1000005_10003","zip1":"10003", "popularity":10},
+        {"id":"1000005_10004","zip1":"10004", "popularity":2},
+        {"id":"1000005_10001","zip1":"10001", "popularity":3}
+    ]
+  },
+  {
+    "id": "1000006",
+    "name": "Cablevision",
+    "zip": "20002",
+    "_childDocuments":[
+        {"id":"1000006_20001","zip1":"20001", "popularity":10},
+        {"id":"1000006_20002","zip1":"20002", "popularity":100},
+        {"id":"1000006_20003","zip1":"20003", "popularity":10},
+        {"id":"1000006_20005","zip1":"20005", "popularity":3}
+    ]
+  },
+  {
+    "id": "1000007",
+    "name": "John Landscaping",
+    "zip": "10003",
+    "_childDocuments":[
+        {"id":"1000007_10001","zip1":"10001", "popularity":1},
+        {"id":"1000007_10002","zip1":"10002", "popularity":1},
+        {"id":"1000007_10003","zip1":"10003", "popularity":10},
+        {"id":"1000007_10004","zip1":"10004", "popularity":50},
+        {"id":"1000007_10005","zip1":"10005", "popularity":3}
+    ]
+  },
+  {
+    "id": "1000008",
+    "name": "Alpha Landscaping",
+    "zip": "10002",
+    "_childDocuments":[
+        {"id":"1000008_10001","zip1":"10001", "popularity":10},
+        {"id":"1000008_10002","zip1":"10002", "popularity":100},
+        {"id":"1000008_10003","zip1":"10003", "popularity":10}
+    ]
+  }]
